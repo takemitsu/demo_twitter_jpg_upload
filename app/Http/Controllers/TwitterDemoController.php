@@ -111,7 +111,6 @@ class TwitterDemoController extends Controller
         // ツイートする
         $result = $twitter_user->post('statuses/update', $params);
 
-        // return '投稿しました。';
-        return redirect('http://takemitsu.net');
+        return redirect('/')->with('status', '投稿しました');
     }
 }

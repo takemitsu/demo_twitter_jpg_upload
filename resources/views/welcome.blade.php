@@ -7,6 +7,26 @@
     <body>
         <div class="container">
             <div class="content">
+
+
+                @if (count($errors) > 0)
+                <!-- upload file にエラーが有った場合 -->
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if (session('status'))
+                    <!-- 終わったよをアレ -->
+                    <div class="alert alert-success">
+                        {{ session('status') }}
+                    </div>
+                @endif
+
                 <form method="post" action="/upload" enctype="multipart/form-data">
 
                     <div class="form-group">

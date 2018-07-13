@@ -14,3 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+// メディアを受け取ってツイッター連携
+// セッションに色々ぶっこんどく
+Route::post('/upload', 'TwitterDemoController@upload');
+
+// コールバックするヤツ
+Route::get('callback', 'TwitterDemoController@callback');

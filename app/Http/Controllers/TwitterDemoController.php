@@ -10,21 +10,20 @@ use App\Http\Controllers\Controller;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Webpatser\Uuid\Uuid;
-
+use Log;
 
 class TwitterDemoController extends Controller
 {
 
     public function upload(Request $request)
     {
-
         $uuid = Uuid::generate(4);
 
         $this->validate($request,[
-            'uploadfile' => 'image|mimes:jpeg,jpg'
+            'uploadfile' => 'required|image|mimes:jpeg,jpg'
         ]);
 
-        if (! $request->file('photo')->isValid()) {
+        if (! $request->file('uploadfile')->isValid()) {
             abort(401, '');
         }
         $file = $request->file('uploadfile');
@@ -71,13 +70,10 @@ class TwitterDemoController extends Controller
         $oauth_token = session('oauth_token');
         $oauth_token_secret = session('oauth_token_secret');
 
-        # request_tokenが不正な値だった場合エラー
-        if ($request->has('oauth_token') && $oauth_token !== $request->oauth_token) {
-            return Redirect::to('/login');
-        }
-
         # request_tokenからaccess_tokenを取得
         $twitter = new TwitterOAuth(
+            config('twitter.consumer_key'),
+            config('twitter.consumer_secret'),
             $oauth_token,
             $oauth_token_secret
         );
@@ -102,8 +98,10 @@ class TwitterDemoController extends Controller
         # $twitter_user_info = $twitter_user->get('account/verify_credentials');
         # dd($twitter_user_info);
 
+        $file_path = session('image_file_path');
+
         // 画像をアップロード
-        $media = $twitter_user->upload('media/upload', ['media' => './image.jpg']);
+        $media = $twitter_user->upload('media/upload', ['media' => $file_path]);
         // ツイートの内容を設定
         $params = [
             'status' => 'test #test',
